@@ -985,6 +985,25 @@ bool DriveClass::Start_Of_Move(void)
 					}
 				}
 
+				/*
+				**	MOD: AI harvester unstick. If a computer controlled harvester has no path at
+				**	all, it is probably boxed in by its own units. Only the cell it happens to be
+				**	facing was being asked to move above, so a harvester surrounded on several
+				**	sides stayed stuck. Force every adjacent friendly blocker to scatter.
+				*/
+				if (What_Am_I() == RTTI_UNIT && ((UnitClass *)this)->Class->IsToHarvest && !House->IsHuman) {
+					CELL here = Coord_Cell(Center_Coord());
+					for (FacingType f = FACING_N; f < FACING_COUNT; f++) {
+						CELL adj = Adjacent_Cell(here, f);
+						if (!Map.In_Radar(adj)) continue;
+						CellClass * adjptr = &Map[adj];
+						TechnoClass * blocker = adjptr->Cell_Techno();
+						if (blocker && blocker != this && House->Is_Ally(blocker) && Can_Enter_Cell(adj) == MOVE_TEMP) {
+							adjptr->Incoming(0, true, true);
+						}
+					}
+				}
+
 				if (TryTryAgain > 0) {
 					TryTryAgain--;
 				} else {
