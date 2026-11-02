@@ -6,14 +6,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: microsoft/setup-msbuild@v2
+      - name: Install Windows 8.1 SDK
+        run: choco install windows-sdk-8.1 -y --no-progress
       - name: Build RedAlert (Release, Win32)
-        env:
-          CL: /DWINDOWS_IGNORE_PACKING_MISMATCH
-        run: msbuild RedAlert\RedAlert.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143 /p:WindowsTargetPlatformVersion=10.0 /m
+        run: msbuild RedAlert\RedAlert.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143 /p:WindowsTargetPlatformVersion=8.1 /m
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: RedAlert-dll
-          path: |
-            bin/**/*.dll
-            **/Release/*.dll
+          path: bin/Win32/RedAlert.dll
