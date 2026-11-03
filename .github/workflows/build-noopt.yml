@@ -1,0 +1,23 @@
+name: Build RedAlert DLL (no optimization)
+on:
+  push:
+    paths:
+      - '.github/workflows/build-noopt.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+      - name: Install Windows 8.1 SDK
+        run: choco install windows-sdk-8.1 -y --no-progress
+      - name: Build RedAlert (Release, Win32, no optimization)
+        env:
+          _CL_: /Od
+        run: msbuild RedAlert\RedAlert.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143 /p:WindowsTargetPlatformVersion=8.1 /p:WholeProgramOptimization=false /m
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RedAlert-dll-noopt
+          path: bin/Win32/RedAlert.dll
