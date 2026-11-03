@@ -12,7 +12,7 @@ jobs:
         shell: pwsh
         run: |
           $vs = & 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' -latest -property installationPath
-          $p = Start-Process -FilePath 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe' -Wait -PassThru -ArgumentList 'modify','--installPath',('"' + $vs + '"'),'--add','Microsoft.VisualStudio.Component.VC.v141.x86.x64','--quiet','--norestart','--noUpdateInstaller'
+          $p = Start-Process -FilePath 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe' -Wait -PassThru -ArgumentList 'modify','--installPath',('"' + $vs + '"'),'--add','Microsoft.VisualStudio.Component.VC.v141.x86.x64','--add','Microsoft.VisualStudio.Component.VC.v141.MFC','--quiet','--norestart','--noUpdateInstaller'
           Write-Host ('installer exit code ' + $p.ExitCode)
       - name: Build RedAlert (Release, Win32, v141)
         run: msbuild RedAlert\RedAlert.vcxproj /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v141 /p:WindowsTargetPlatformVersion=8.1 /m
